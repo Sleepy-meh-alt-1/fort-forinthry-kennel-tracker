@@ -192,6 +192,12 @@ function loadFoodManifest() {
     });
 }
 
+function assetUrl(path) {
+  return new URL(path, document.baseURI).href;
+}
+
+
+
 // -------------------------
 // UI helpers
 // -------------------------
@@ -200,12 +206,14 @@ function setStatus(text) {
   if (el) el.textContent = text;
 }
 
-function setDogVisible(visible) {
+function setDogVisible(isVisible) {
   const img = document.getElementById("dogPic");
   if (!img) return;
-  img.src = DOG_IMAGE;
-  img.style.display = visible ? "block" : "none";
+
+  img.src = assetUrl("./assests/dog.png");
+  img.style.display = isVisible ? "block" : "none";
 }
+
 
 function avgQty(dropDef) {
   const o = state.drops[dropDef.id];
@@ -287,7 +295,7 @@ function renderTable() {
     tr.innerHTML = `
       <td>
         <span class="caret">${caret}</span>
-        <img class="drop-icon" src="${d.icon}" onerror="this.style.display='none'">
+        <img class="drop-icon" src="${assetUrl(d.icon)}" onerror="this.style.display='none'">
         <div style="display:inline-block; vertical-align:middle;">
           <div><strong>${d.name}</strong></div>
           ${range ? `<div class="muted" style="font-size:12px; line-height:1.1;">${range}</div>` : ``}
