@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      crossorigin="anonymous"
+    />
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://runeapps.org/nis/nis.css" />
+    <script src="https://www.unpkg.com/alt1/dist/base/index.js"></script>
+    <script src="https://www.unpkg.com/alt1/dist/ocr/index.js"></script>
+    <script src="https://www.unpkg.com/alt1/dist/chatbox/index.js"></script>
+
+    <style>
+      body.nis {
+        background: #0b0f14;
+        color: #e7eef8;
+      }
+      .card {
+        background: #111823;
+        border: 1px solid rgba(255,255,255,.08);
+      }
+      .muted { color: #9fb0c3; }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono","Courier New", monospace;
+      }
+      .statusline { font-size: 12px; }
+
+      /* Drop table */
+      .table { color: #e7eef8; margin-bottom: 0; }
+      .table thead th { border-bottom: 1px solid rgba(255,255,255,.12); }
+      .table td, .table th { border-top: 1px solid rgba(255,255,255,.06); }
+      .drop-icon {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        margin-right: 8px;
+      }
+
+      /* Dog + food */
+      #dogRow {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+      }
+
+      #foodLane {
+        position: relative;
+        flex: 1;
+        height: 48px;
+        overflow: hidden;
+      }
+
+      #dogPic {
+        display: none;
+        width: 96px;
+        height: 96px;
+        object-fit: contain;
+        margin-left: 8px;
+      }
+
+      .food {
+        position: absolute;
+        right: -48px;
+        top: 0;
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        pointer-events: none;
+      }
+
+      /* Expandable qty breakdown */
+      .row-toggle { cursor: pointer; user-select: none; }
+      .caret { display: inline-block; width: 14px; opacity: 0.8; }
+
+      .subrow td {
+        background: rgba(255,255,255,0.03);
+        font-size: 12px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .subgrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+      }
+
+      .badgeQty {
+        display: inline-block;
+        padding: 6px 8px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .badgeQty .k { color: #9fb0c3; }
+      .badgeQty .v { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; }
+
+      /* Scrollable table */
+      .table-scroll {
+        max-height: 1000px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .table-scroll thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #2a3036;
+      }
+
+      /* Debug */
+      #debugLog { font-size: 11px; }
+    </style>
+  </head>
+
+  <body class="nis">
+    <div class="container py-3">
+
+      <!-- Header -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h4 class="mb-1">Kennel (Fort Forinthry)</h4>
+          <div class="muted statusline" id="appStatus">Initializing…</div>
+          <div id="dogRow">
+            <img id="dogPic" src="./assests/dog.png" alt="Dog" />
+            <div id="foodLane"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug (optional) -->
+      <div class="card mb-3" id="debugCard" style="display:none;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div><strong>Debug</strong> <span class="muted">(latest events)</span></div>
+            <button class="btn btn-sm btn-secondary" id="debugToggleBtn">Hide</button>
+          </div>
+          <pre id="debugLog" class="mono" style="max-height:240px; overflow:auto; margin:0; white-space:pre-wrap;"></pre>
+        </div>
+      </div>
+
+      <button class="btn btn-sm btn-outline-secondary mb-3" id="showDebugBtn">Show debug</button>
+
+      <!-- Stats -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-4">
+              <div class="muted">Feed progress</div>
+              <div class="h5 mono mb-0" id="statFeedProgress">0/5</div>
+            </div>
+
+            <div class="col-4 text-center">
+              <div class="muted">Food wasted</div>
+              <div class="h5 mono mb-0" id="statFoodWasted">0</div>
+            </div>
+
+            <div class="col-4 text-right">
+              <div class="muted">Total rolls</div>
+              <div class="h5 mono mb-0" id="statTotalRolls">0</div>
+            </div>
+
+            <div class="col-6 mt-2">
+              <div class="muted">Avg time / roll</div>
+              <div class="h5 mono mb-0" id="statAvgRollTime">—</div>
+            </div>
+
+            <div class="col-6 mt-2 text-right">
+              <div class="muted">Rolls / hour</div>
+              <div class="h5 mono mb-0" id="statRollsPerHour">—</div>
+            </div>
+          </div>
+
+          <button id="resetBtn" class="btn btn-sm btn-warning mt-3">
+            Reset counters
+          </button>
+        </div>
+      </div>
+
+      <!-- Drops -->
+      <div class="card">
+        <div class="table-scroll">
+          <table class="table table-dark table-hover mb-0">
+            <thead>
+              <tr>
+                <th style="width:52%;">Drop</th>
+                <th style="width:16%;"># Drops</th>
+                <th style="width:16%;">Drop chance</th>
+                <th style="width:16%;">Avg qty</th>
+              </tr>
+            </thead>
+            <tbody id="dropsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="scripts/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "appName": "Kennel Analytics",
+  "description": "Alt1 app that tracks Kennel (Fort Forinthry) loot, feeding efficiency, and drop statistics using chatbox OCR.",
+  "appUrl": "./index.html",
+  "configUrl": "./appconfig.json",
+  "iconUrl": "./assests/dog.png",
+  "permissions": "pixel,overlay"
+}
