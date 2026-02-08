@@ -295,7 +295,10 @@ function renderTable() {
     tr.innerHTML = `
       <td>
         <span class="caret">${caret}</span>
-        <img class="drop-icon" src="${assetUrl(d.icon)}" onerror="this.style.display='none'">
+<img
+  class="drop-icon"
+  src="${d.icon}"
+  onerror="console.warn('Icon failed:', this.src); this.onerror=null; this.src='./assests/dog.png';">
         <div style="display:inline-block; vertical-align:middle;">
           <div><strong>${d.name}</strong></div>
           ${range ? `<div class="muted" style="font-size:12px; line-height:1.1;">${range}</div>` : ``}
@@ -538,12 +541,24 @@ function initAlt1() {
   }, 1000);
 }
 
+
+function verifyIcons() {
+  for (const d of DROPS) {
+    const img = new Image();
+    img.onload = () => dbg?.(`OK icon: ${d.id}`);
+    img.onerror = () => console.warn(`MISSING icon file for ${d.id}: ${d.icon}`);
+    img.src = d.icon;
+  }
+}
+
+
 // -------------------------
 // Boot
 // -------------------------
 window.addEventListener("DOMContentLoaded", () => {
   setupDebugUI();
   loadFoodManifest();
+  verifyIcons();
 
   loadState();
   updateDisplay();
