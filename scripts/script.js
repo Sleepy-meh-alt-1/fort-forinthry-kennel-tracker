@@ -34,9 +34,9 @@ const expandedRows = new Set();
 // Drops
 // -------------------------
 const DROPS = [
-  { id: "coins", name: "Coins", min: 500, max: 727, icon: "./assests/coins_250.png" },
-  { id: "bones", name: "Bones", min: 1, max: 5, icon: "./assests/bones.png" },
-  { id: "big_bones", name: "Big bones", min: 1, max: 5, icon: "./assests/big_bones.png" },
+  { id: "coins", name: "Coins", min: 500, max: 727, icon: "assests/coins_250.png" },
+  { id: "bones", name: "Bones", min: 1, max: 5, icon: "assests/bones.png" },
+  { id: "big_bones", name: "Big bones", min: 1, max: 5, icon: "assests/big_bones.png" },
   { id: "grimy_tarromin", name: "Grimy tarromin", min: 1, max: 3, icon: "./assests/grimy_tarromin.png" },
   { id: "grimy_guam", name: "Grimy guam", min: 1, max: 3, icon: "./assests/grimy_guam.png" },
   { id: "oak_logs", name: "Oak logs", min: 1, max: 5, icon: "./assests/oak_logs.png" },
