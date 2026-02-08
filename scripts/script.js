@@ -251,9 +251,9 @@ function renderQtyBreakdownHtml(dropDef) {
 
   // Guard against huge ranges (coins) even if observed explodes
   const span = maxQ - minQ;
-  if (span > 25) {
+  /*if (span > 25) {
     return `<div class="muted">Range too large to display.</div>`;
-  }
+  }*/
 
   for (let q = minQ; q <= maxQ; q++) {
     const c = Number(o.qtyCounts?.[q] || 0);
