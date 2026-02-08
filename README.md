@@ -38,7 +38,8 @@ All data is stored locally in your browser / Alt1 environment.
 
 ## 📥 Installation
 
-Alt1 Installation link: TODO: add link
+Alt1 Installation link: 
+alt1://addapp/https://sleepy-meh-alt-1.github.io/fort-forinthry-kennel-tracker/appconfig.json
 
 ## ⚠️ Disclaimer
 
